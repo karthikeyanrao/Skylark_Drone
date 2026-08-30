@@ -1,0 +1,10 @@
+[project]
+name = "skylark-deal-tracker"
+version = "1.0.0"
+description = "Free agentic deal tracker for Skylark Drones"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+# Note: test env vars (PYTEST_RUNNING, DATA_SOURCE, AGENT_MODE) are set by tests/conftest.py
