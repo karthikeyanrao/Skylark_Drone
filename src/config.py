@@ -23,7 +23,7 @@ LLM_BASE_URL = os.getenv(
     "LLM_BASE_URL",
     "https://generativelanguage.googleapis.com/v1beta/openai/",
 )
-LLM_MODEL = os.getenv("LLM_MODEL", "gemini-2.5-flash")
+LLM_MODEL = os.getenv("LLM_MODEL", "gemini-3.6-flash")
 
 # Legacy Groq compat — if only GROQ_API_KEY is set, promote it to the LLM slot
 _groq_key = os.getenv("GROQ_API_KEY", "")

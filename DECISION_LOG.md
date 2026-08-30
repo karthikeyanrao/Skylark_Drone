@@ -18,7 +18,7 @@
 
 | Decision | Chosen | Alternative | Why |
 |----------|--------|-------------|-----|
-| LLM | Google Gemini 2.5 Flash (default, free tier) | Claude/Anthropic API (paid) | Assignment requires AI agent; Gemini free tier has no credit card requirement. Analytical engine retained as no-key fallback. |
+| LLM | Google Gemini 3.6 Flash (default, free tier) | Claude/Anthropic API (paid) | Assignment requires AI agent; Gemini free tier has no credit card requirement. Analytical engine retained as no-key fallback. |
 | LLM client | `openai` package + `base_url` swap | Provider-specific SDKs | Single dependency, works with Gemini / Cerebras / Groq / any OpenAI-compatible endpoint. |
 | Data source | monday.com live GraphQL (default) | Local Excel | Assignment explicitly forbids hardcoded CSV/Excel as runtime source. Excel retained as pytest fixture only (`PYTEST_RUNNING=1`). |
 | Integration | Direct GraphQL API | monday hosted MCP | MCP returns generic raw rows; cleaning logic (header filter, status disambiguation) belongs in testable Python, not the prompt. |

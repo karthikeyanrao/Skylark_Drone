@@ -37,7 +37,15 @@ def _openai_tools() -> list[dict[str, Any]]:
 
 def run_llm_agent(user_message: str, memory: SessionMemory, history: list[dict]) -> str:
     """Run the LLM agent.  Falls back gracefully if no API key is configured."""
-    if not LLM_API_KEY:
+    import os
+    from dotenv import load_dotenv
+    load_dotenv(override=False)
+
+    api_key = os.getenv("LLM_API_KEY", LLM_API_KEY)
+    base_url = os.getenv("LLM_BASE_URL", LLM_BASE_URL)
+    model = os.getenv("LLM_MODEL", LLM_MODEL)
+
+    if not api_key:
         return (
             "**AI agent mode requires a free API key.**\n\n"
             "Get one in under 2 minutes — no credit card needed:\n"
@@ -49,7 +57,7 @@ def run_llm_agent(user_message: str, memory: SessionMemory, history: list[dict])
             + run_analytical_agent(user_message, memory)
         )
 
-    client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL)
+    client = OpenAI(api_key=api_key, base_url=base_url)
 
     messages: list[dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
 
@@ -67,7 +75,7 @@ def run_llm_agent(user_message: str, memory: SessionMemory, history: list[dict])
     try:
         for _ in range(5):
             response = client.chat.completions.create(
-                model=LLM_MODEL,
+                model=model,
                 messages=messages,  # type: ignore[arg-type]
                 tools=tools,  # type: ignore[arg-type]
                 tool_choice="auto",

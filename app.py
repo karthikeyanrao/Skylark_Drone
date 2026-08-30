@@ -25,7 +25,7 @@ st.set_page_config(
 # ── Theme Management ─────────────────────────────────────────────────────────
 
 if "theme_mode" not in st.session_state:
-    st.session_state.theme_mode = "dark"
+    st.session_state.theme_mode = "light"
 
 
 def get_theme_css(theme: str) -> str:
@@ -349,12 +349,12 @@ def sidebar() -> None:
         st.markdown("#### Theme Mode")
         theme_choice = st.radio(
             "Select Theme",
-            options=["Dark Mode", "Light Mode"],
-            index=0 if st.session_state.theme_mode == "dark" else 1,
+            options=["Light Mode", "Dark Mode"],
+            index=0 if st.session_state.theme_mode == "light" else 1,
             label_visibility="collapsed",
             horizontal=True,
         )
-        new_theme = "dark" if theme_choice == "Dark Mode" else "light"
+        new_theme = "light" if theme_choice == "Light Mode" else "dark"
         if new_theme != st.session_state.theme_mode:
             st.session_state.theme_mode = new_theme
             st.rerun()
@@ -396,7 +396,7 @@ def sidebar() -> None:
         st.markdown("---")
         if not use_llm_agent():
             st.warning(
-                "AI agent disabled — set `LLM_API_KEY` in `.env` to enable Gemini 2.5 Flash."
+                "AI agent disabled — set `LLM_API_KEY` in `.env` to enable Gemini 2.0 Flash."
             )
 
 

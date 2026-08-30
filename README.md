@@ -57,7 +57,7 @@ LLM_API_KEY=your_gemini_or_cerebras_key
 
 # Optional — defaults shown
 LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
-LLM_MODEL=gemini-2.5-flash
+LLM_MODEL=gemini-3.6-flash
 AGENT_MODE=llm          # llm | analytical (fallback if no key)
 DATA_SOURCE=monday      # monday | local (local only for pytest)
 ```
