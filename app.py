@@ -9,11 +9,7 @@ from src.agent.llm_agent import run_llm_agent
 from src.brief.leadership_brief import generate_leadership_brief
 from src.config import (
     AGENT_MODE,
-    BRAND_ORANGE,
-    BRAND_ORANGE_DARK,
-    DEALS_BOARD_ID,
     LLM_MODEL,
-    WORK_ORDERS_BOARD_ID,
     monday_setup_missing,
     use_llm_agent,
     use_monday_api,
@@ -22,7 +18,6 @@ from src.data.loader import data_source_label
 
 st.set_page_config(
     page_title="Skylark AI · Deal Tracker",
-    page_icon="🟠",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -108,9 +103,6 @@ def get_theme_css(theme: str) -> str:
             color: #FF6B00 !important;
             font-size: 2.2rem;
             font-weight: 800 !important;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
         }}
 
         .skylark-hero p {{
@@ -283,19 +275,19 @@ def _agent_label() -> str:
 def init_session() -> None:
     if "messages" not in st.session_state:
         data_note = (
-            "Live **monday.com** data" if use_monday_api() else "⚠️ monday.com not yet connected"
+            "Live monday.com data" if use_monday_api() else "monday.com not connected"
         )
         agent_note = (
-            f"**{_agent_label()}** AI agent" if use_llm_agent() else "analytical agent"
+            f"{_agent_label()} AI agent" if use_llm_agent() else "analytical agent"
         )
         st.session_state.messages = [
             {
                 "role": "assistant",
                 "content": (
-                    f"👋 Welcome to **Skylark AI Deal Tracker**.\n\n"
-                    f"Connected to {data_note} &amp; powered by {agent_note}.\n\n"
-                    "Ask any open-ended question about pipeline, revenue, won deals, or work order operations. "
-                    "Type **/brief** or click **Leadership Brief** in the sidebar for an executive snapshot."
+                    f"Welcome to **Skylark AI Deal Tracker**.\n\n"
+                    f"Connected to {data_note} and powered by {agent_note}.\n\n"
+                    "Ask any business question about pipeline, revenue, won deals, or work order operations. "
+                    "Type **/brief** or click **Executive Leadership Brief** in the sidebar for an executive snapshot."
                 ),
             }
         ]
@@ -322,19 +314,18 @@ def maybe_show_setup_banner() -> None:
     st.markdown(
         """
         <div class="setup-banner">
-        <h3 style="color:#FF6B00;margin-top:0">⚙️ monday.com Setup Required</h3>
+        <h3 style="color:#FF6B00;margin-top:0">monday.com Setup Required</h3>
         <p>This app queries <strong>monday.com live boards</strong>. Add your board IDs to continue:</p>
         <ol>
-          <li>Open your monday.com Deals board → copy the board ID from the URL
-              (<code>https://app.monday.com/boards/<strong>1234567890</strong></code>)</li>
+          <li>Open your monday.com Deals board and copy the board ID from the URL</li>
           <li>Repeat for the Work Orders board</li>
-          <li>Add to <code>.env</code> (local) or Streamlit Cloud → <em>Secrets</em>:
+          <li>Add to <code>.env</code> or Streamlit Cloud Secrets:
               <pre>DEALS_BOARD_ID=1234567890
 WORK_ORDERS_BOARD_ID=9876543210</pre>
           </li>
-          <li>Restart / rerun the app</li>
+          <li>Restart the app</li>
         </ol>
-        <p>Your <code>MONDAY_API_TOKEN</code> is already configured ✅</p>
+        <p>Your <code>MONDAY_API_TOKEN</code> is configured.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -345,47 +336,43 @@ WORK_ORDERS_BOARD_ID=9876543210</pre>
 
 def sidebar() -> None:
     with st.sidebar:
-        st.markdown("## 🟠 Skylark AI")
+        st.markdown("## Skylark AI")
         agent_lbl = _agent_label()
         st.markdown(
             f'<span class="skylark-badge"><span class="skylark-badge-pulse"></span> MONDAY.COM LIVE</span> '
-            f'<span class="skylark-badge">✦ {agent_lbl}</span>',
+            f'<span class="skylark-badge">{agent_lbl}</span>',
             unsafe_allow_html=True,
         )
 
         st.markdown("---")
 
-        st.markdown("#### 🎨 Theme Mode")
+        st.markdown("#### Theme Mode")
         theme_choice = st.radio(
             "Select Theme",
-            options=["🌙 Dark Mode", "☀️ Light Mode"],
+            options=["Dark Mode", "Light Mode"],
             index=0 if st.session_state.theme_mode == "dark" else 1,
             label_visibility="collapsed",
             horizontal=True,
         )
-        new_theme = "dark" if "Dark" in theme_choice else "light"
+        new_theme = "dark" if theme_choice == "Dark Mode" else "light"
         if new_theme != st.session_state.theme_mode:
             st.session_state.theme_mode = new_theme
             st.rerun()
 
         st.markdown(f"**Data Source:** `{data_source_label()}`")
-        if DEALS_BOARD_ID:
-            st.caption(f"Deals Board: `#{DEALS_BOARD_ID}`")
-        if WORK_ORDERS_BOARD_ID:
-            st.caption(f"Work Orders Board: `#{WORK_ORDERS_BOARD_ID}`")
 
         st.markdown("---")
-        st.markdown("#### 📊 Quick Actions")
-        if st.button("📑 Executive Leadership Brief", use_container_width=True):
+        st.markdown("#### Quick Actions")
+        if st.button("Executive Leadership Brief", use_container_width=True):
             try:
                 brief = generate_leadership_brief()
             except Exception as exc:
-                brief = f"⚠️ Could not generate brief — monday.com not connected yet. ({exc})"
+                brief = f"Could not generate brief — monday.com not connected yet. ({exc})"
             st.session_state.messages.append({"role": "user", "content": "/brief"})
             st.session_state.messages.append({"role": "assistant", "content": brief})
             st.rerun()
 
-        if st.button("🗑️ Clear Chat History", use_container_width=True):
+        if st.button("Clear Chat History", use_container_width=True):
             st.session_state.messages = []
             st.session_state.history = []
             st.session_state.memory = SessionMemory()
@@ -393,7 +380,7 @@ def sidebar() -> None:
             st.rerun()
 
         st.markdown("---")
-        st.markdown("#### 💡 Example Questions")
+        st.markdown("#### Example Questions")
         examples = [
             "What's our open pipeline by sector?",
             "How many deals have we won?",
@@ -409,8 +396,7 @@ def sidebar() -> None:
         st.markdown("---")
         if not use_llm_agent():
             st.warning(
-                "**AI agent disabled** — set `LLM_API_KEY` in `.env` to enable Gemini 2.5 Flash.",
-                icon="🔑",
+                "AI agent disabled — set `LLM_API_KEY` in `.env` to enable Gemini 2.5 Flash."
             )
 
 
@@ -420,7 +406,7 @@ def hero_and_stats() -> None:
     st.markdown(
         """
         <div class="skylark-hero">
-            <h1><span>🟠</span> Skylark Deal Tracker AI</h1>
+            <h1>Skylark Deal Tracker AI</h1>
             <p>Autonomous business intelligence for deal pipelines, revenue, and work order operations.</p>
         </div>
         """,
@@ -472,7 +458,7 @@ def main() -> None:
     hero_and_stats()
 
     for msg in st.session_state.messages:
-        with st.chat_message(msg["role"], avatar="🧑‍💻" if msg["role"] == "user" else "🟠"):
+        with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
     pending = st.session_state.pop("pending_prompt", None)
@@ -480,22 +466,22 @@ def main() -> None:
 
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user", avatar="🧑‍💻"):
+        with st.chat_message("user"):
             st.markdown(prompt)
 
-        with st.chat_message("assistant", avatar="🟠"):
+        with st.chat_message("assistant"):
             with st.spinner("Analyzing live monday.com data…"):
                 try:
                     if monday_setup_missing():
                         response = (
-                            "⚠️ **monday.com board IDs are not configured yet.**\n\n"
+                            "monday.com board IDs are not configured yet. "
                             "Please add `DEALS_BOARD_ID` and `WORK_ORDERS_BOARD_ID` to your `.env` "
                             "or Streamlit Cloud secrets, then refresh."
                         )
                     else:
                         response = run_agent(prompt)
                 except Exception as exc:
-                    response = f"⚠️ Data source error — please check your monday.com credentials and retry. `{exc}`"
+                    response = f"Data source error — please check your monday.com credentials and retry. `{exc}`"
             st.markdown(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
